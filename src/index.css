@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+/* Design tokens. Components use them as Tailwind classes, e.g. bg-paper, text-muted, border-line, font-display. */
+@theme {
+  --font-sans: "DM Sans", system-ui, sans-serif;
+  --font-display: "Bricolage Grotesque", "DM Sans", sans-serif;
+
+  --color-paper: #f5f7f6;
+  --color-ink: #17212b;
+  --color-muted: #5d6b78;
+  --color-line: #d9e0e4;
+  --color-line-soft: #e3eae7;
+  --color-green: #17734a;
+  --color-green-soft: #e0f2ea;
+  --color-premium: #4338ca;
+  --color-premium-soft: #e8e7fb;
+  --color-premium-ink: #3b24b8;
+  --color-booked: #b4361f;
+  --color-booked-soft: #fbe6e1;
+  --color-sold: #8a5a00;
+  --color-sold-soft: #fff3d6;
+  --color-silver: #7b858d;
+  --color-silver-soft: #eceff1;
+  --color-gold: #9a6b00;
+  --color-gold-line: #c79200;
+  --color-gold-soft: #fbefc9;
+  --color-band: #0f1f1b;
+  --color-band-2: #1e352f;
+  --color-mint: #a9c9bc;
+  --color-jade: #1f8a66;
+
+  --animate-shimmer: shimmer 1.3s infinite;
+  @keyframes shimmer {
+    to { background-position: -200% 0; }
+  }
+}
+
+body { background: var(--color-paper); color: var(--color-ink); font-family: var(--font-sans); line-height: 1.5; }
+:focus-visible { outline: 3px solid var(--color-premium); outline-offset: 2px; }
