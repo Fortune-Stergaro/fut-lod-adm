@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import Browse from "./pages/Browse.jsx";
 import LodgeDetail from "./pages/LodgeDetail.jsx";
@@ -7,15 +7,9 @@ import MyBookings from "./pages/MyBookings.jsx";
 import AgentGate from "./pages/agent/AgentGate.jsx";
 import AgentLodges from "./pages/agent/AgentLodges.jsx";
 import AgentLodgeForm from "./pages/agent/AgentLodgeForm.jsx";
-import AdminLayout from "./pages/admin/AdminLayout.jsx";
-import AdminBookings from "./pages/admin/AdminBookings.jsx";
-import AdminRequests from "./pages/admin/AdminRequests.jsx";
-import AdminReview from "./pages/admin/AdminReview.jsx";
-import AdminInterests from "./pages/admin/AdminInterests.jsx";
-import AdminLodges from "./pages/admin/AdminLodges.jsx";
-import AdminAgents from "./pages/admin/AdminAgents.jsx";
-import AdminAgentPage from "./pages/admin/AdminAgentPage.jsx";
-import AdminStats from "./pages/admin/AdminStats.jsx";
+import AdminGate from "./pages/admin/AdminGate.jsx";
+import NotFound from "./pages/NotFound.jsx";
+import Tracker from "./components/Tracker.jsx";
 import AuthModal from "./components/AuthModal.jsx";
 import SetPasswordModal from "./components/SetPasswordModal.jsx";
 import InstallButton from "./components/InstallButton.jsx";
@@ -23,8 +17,11 @@ import { LinkBtn } from "./components/ui.jsx";
 import { LodgeListProvider } from "./lib/LodgeListContext.jsx";
 import { AuthProvider, useAuth } from "./lib/AuthContext.jsx";
 
+// Admin screens are a separate chunk: only downloaded once the user is confirmed as an admin
+const AdminRoutes = lazy(() => import("./pages/admin/AdminRoutes.jsx"));
+
 function SiteHeader() {
-  const { user, agent, needsPassword, signOut } = useAuth();
+  const { user, agent, isAdmin, needsPassword, signOut } = useAuth();
   const ref = useRef(null);
   const [authOpen, setAuthOpen] = useState(false);
 
@@ -57,7 +54,7 @@ function SiteHeader() {
           {!user && (
             <button className="min-h-10 cursor-pointer rounded-lg border border-[#6f8a81] px-4 text-[0.85rem] font-bold text-white" onClick={() => setAuthOpen(true)}>Sign in</button>
           )}
-          <Link to="/admin" className="text-[0.85rem] opacity-70">Admin</Link>
+          {isAdmin && <Link to="/admin" className="text-[0.85rem] opacity-70">Admin</Link>}
         </div>
       </div>
       {authOpen && <AuthModal onClose={() => setAuthOpen(false)} onSuccess={() => setAuthOpen(false)} />}
@@ -70,6 +67,7 @@ export default function App() {
   return (
     <AuthProvider>
       <LodgeListProvider>
+        <Tracker />
         <SiteHeader />
         <main className="mx-auto max-w-[1120px] px-4 pb-16 pt-5">
           <Routes>
@@ -82,17 +80,12 @@ export default function App() {
               <Route path="new" element={<AgentLodgeForm />} />
               <Route path="edit/:id" element={<AgentLodgeForm />} />
             </Route>
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<AdminBookings />} />
-              <Route path="requests" element={<AdminRequests />} />
-              <Route path="requests/:id" element={<AdminReview />} />
-              <Route path="interests" element={<AdminInterests />} />
-              <Route path="lodges" element={<AdminLodges />} />
-              <Route path="agents" element={<AdminAgents />} />
-              <Route path="agents/:id" element={<AdminAgentPage />} />
-              <Route path="stats" element={<AdminStats />} />
-            </Route>
-            <Route path="*" element={<p>Page not found.</p>} />
+            <Route path="/admin/*" element={
+              <AdminGate>
+                <Suspense fallback={<p className="py-8 text-muted">Loading…</p>}><AdminRoutes /></Suspense>
+              </AdminGate>
+            } />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
       </LodgeListProvider>

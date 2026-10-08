@@ -7,6 +7,7 @@ import { useAuth } from "../lib/AuthContext.jsx";
 import RequestModal from "../components/RequestModal.jsx";
 import AuthModal from "../components/AuthModal.jsx";
 import StatList from "../components/StatList.jsx";
+import CopyLinkButton from "../components/CopyLinkButton.jsx";
 import { Btn, Panel, Tag, cx } from "../components/ui.jsx";
 
 const PBTN = "flex size-11 items-center justify-center rounded-full border border-line bg-white text-[1.4rem] leading-none no-underline";
@@ -164,6 +165,7 @@ export default function LodgeDetail() {
               {lodge.lodge_name ? `${lodge.name} · ` : ""}{lodge.location ? `${lodge.location} · ` : ""}
               {lodge.rooms} room{lodge.rooms > 1 ? "s" : ""} · {lodge.interest_count} interested
             </p>
+            <CopyLinkButton className="mt-3" url={`${window.location.origin}/lodge/${lodge.id}`} />
           </div>
 
           <Panel pad="sm" className="flex items-center gap-4">

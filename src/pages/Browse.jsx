@@ -36,6 +36,12 @@ export default function Browse() {
     );
   }, [lodges, filters]);
 
+  // How much is still free right now (all live lodges, ignoring the filters)
+  const availability = useMemo(() => ({
+    apartments: lodges.reduce((n, l) => n + (l.units_available || 0), 0),
+    lodges: lodges.filter((l) => l.units_available > 0).length,
+  }), [lodges]);
+
   // Stat chips come from the stats the lodges actually have
   const statOptions = useMemo(() => {
     const m = new Map();
@@ -51,6 +57,19 @@ export default function Browse() {
 
   return (
     <>
+      {!loading && !error && (
+        <p className="mb-3 inline-flex items-center gap-2.5 rounded-full border border-line bg-white px-4 py-2 text-[0.92rem]" aria-live="polite">
+          <span aria-hidden className={`size-2.5 rounded-full ${availability.apartments > 0 ? "bg-green" : "bg-booked"}`} />
+          {availability.apartments > 0 ? (
+            <span>
+              <strong>{availability.apartments}</strong> {availability.apartments === 1 ? "apartment" : "apartments"} available
+              {" "}across <strong>{availability.lodges}</strong> {availability.lodges === 1 ? "lodge" : "lodges"}
+            </span>
+          ) : (
+            <span>No apartments available right now. Check back soon.</span>
+          )}
+        </p>
+      )}
       <FilterPanel filters={filters} onChange={setFilters} options={statOptions} open={filtersOpen} onToggle={() => setFiltersOpen((o) => !o)} />
       {loading && <p className="py-8 text-muted">Loading lodges…</p>}
       {error && <p className="py-8 text-booked">{error}</p>}

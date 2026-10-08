@@ -47,11 +47,15 @@ export function lodgeMeta(lodge, site) {
   const first = Number(lodge.price_first_year) && lodge.price_first_year !== lodge.price_yearly ? ` (${naira(lodge.price_first_year)} first year)` : "";
   const rooms = lodge.rooms ? `${plural(lodge.rooms, "room", "rooms")} per apartment` : "";
   const avail = free > 0 ? `${free} of ${plural(total, "apartment", "apartments")} available` : "Fully booked";
-  const features = stats.length ? `Includes ${stats.slice(0, 5).map((s) => s.name).join(", ")}.` : "";
-  const description = clip(
-    [`${price}${first}`, rooms, avail].filter(Boolean).join(" · ") + `. ${features} Watch the video tour and book online.`.replace("  ", " "),
-    300
-  );
+  // Features listed premium first, then convenient, then essential (so the best ones survive when a chat app cuts the text short)
+  const groups = [["premium", "Premium"], ["convenient", "Convenient"], ["essential", "Essential"]]
+    .map(([key, label]) => {
+      const names = stats.filter((s) => s.status === key).map((s) => s.name);
+      return names.length ? `${label}: ${names.join(", ")}` : "";
+    })
+    .filter(Boolean);
+  const features = groups.length ? ` ${groups.join(" · ")}.` : "";
+  const description = clip(`${[`${price}${first}`, rooms, avail].filter(Boolean).join(" · ")}.${features} Watch the video tour and book online.`, 300);
 
   const url = `${site}/lodge/${lodge.id}`;
   const image = `${site}/api/og?id=${lodge.id}&v=${free}-${lodge.price_yearly}`;

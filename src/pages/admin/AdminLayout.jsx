@@ -3,6 +3,7 @@ import { cx } from "../../components/ui.jsx";
 
 const LINKS = [
   ["/admin", "Bookings", true],
+  ["/admin/analytics", "Analytics"],
   ["/admin/requests", "Lodge requests"],
   ["/admin/interests", "Interests"],
   ["/admin/lodges", "Manage lodges"],
@@ -10,7 +11,7 @@ const LINKS = [
   ["/admin/stats", "Stat categories"],
 ];
 
-// TODO before production: protect this route and change admin_check() in supabase/v2-migration.sql.
+// Only rendered for signed-in admins (see AdminGate and supabase/v5-migration.sql).
 export default function AdminLayout() {
   return (
     <>

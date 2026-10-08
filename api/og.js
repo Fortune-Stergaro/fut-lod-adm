@@ -62,10 +62,10 @@ function lodgeCard(l) {
   const sub = [l.lodge_name ? l.name : null, l.location].filter(Boolean).join("  ·  ");
   const stats = availableStats(l);
   const chipBg = { premium: C.premium, convenient: C.gold, essential: C.silver };
-  const shown = stats.slice(0, 4);
+  const shown = stats.slice(0, 6); // already sorted premium > convenient > essential
   const chips = [
     l.rooms ? box({ border: `2px solid ${C.mint}`, color: C.white, fontSize: 26, fontWeight: 700, padding: "8px 20px", borderRadius: 999, marginRight: 12, marginBottom: 12 }, `${l.rooms} room${l.rooms === 1 ? "" : "s"}`) : null,
-    ...shown.map((s) => box({ background: chipBg[s.status] || C.silver, color: C.white, fontSize: 26, fontWeight: 700, padding: "8px 20px", borderRadius: 999, marginRight: 12, marginBottom: 12 }, clip(s.name, 22))),
+    ...shown.map((s) => box({ background: chipBg[s.status] || C.silver, color: C.white, fontSize: 25, fontWeight: 700, padding: "7px 18px", borderRadius: 999, marginRight: 12, marginBottom: 12 }, clip(s.name, 22))),
     stats.length > shown.length ? box({ color: C.mint, fontSize: 26, padding: "8px 8px", marginBottom: 12 }, `+${stats.length - shown.length} more`) : null,
   ];
   const sameFirstYear = !Number(l.price_first_year) || l.price_first_year === l.price_yearly;
