@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import Browse from "./pages/Browse.jsx";
 import LodgeDetail from "./pages/LodgeDetail.jsx";
@@ -7,7 +7,6 @@ import MyBookings from "./pages/MyBookings.jsx";
 import AgentGate from "./pages/agent/AgentGate.jsx";
 import AgentLodges from "./pages/agent/AgentLodges.jsx";
 import AgentLodgeForm from "./pages/agent/AgentLodgeForm.jsx";
-import AdminGate from "./pages/admin/AdminGate.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import Tracker from "./components/Tracker.jsx";
 import Footer from "./components/Footer.jsx";
@@ -18,11 +17,8 @@ import { LinkBtn } from "./components/ui.jsx";
 import { LodgeListProvider } from "./lib/LodgeListContext.jsx";
 import { AuthProvider, useAuth } from "./lib/AuthContext.jsx";
 
-// Admin screens are a separate chunk: only downloaded once the user is confirmed as an admin
-const AdminRoutes = lazy(() => import("./pages/admin/AdminRoutes.jsx"));
-
 function SiteHeader() {
-  const { user, agent, isAdmin, needsPassword, signOut } = useAuth();
+  const { user, agent, needsPassword, signOut } = useAuth();
   const ref = useRef(null);
   const [authOpen, setAuthOpen] = useState(false);
 
@@ -55,7 +51,6 @@ function SiteHeader() {
           {!user && (
             <button className="min-h-10 cursor-pointer rounded-lg border border-white/30 px-4 text-[0.85rem] font-bold text-white" onClick={() => setAuthOpen(true)}>Sign in</button>
           )}
-          {isAdmin && <Link to="/admin" className="text-[0.85rem] opacity-70">Admin</Link>}
         </div>
       </div>
       {authOpen && <AuthModal onClose={() => setAuthOpen(false)} onSuccess={() => setAuthOpen(false)} />}
@@ -82,11 +77,6 @@ export default function App() {
               <Route path="new" element={<AgentLodgeForm />} />
               <Route path="edit/:id" element={<AgentLodgeForm />} />
             </Route>
-            <Route path="/admin/*" element={
-              <AdminGate>
-                <Suspense fallback={<p className="py-8 text-muted">Loading…</p>}><AdminRoutes /></Suspense>
-              </AdminGate>
-            } />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>

@@ -1,23 +1,18 @@
 import { useRef, useState } from "react";
-import { Link } from "react-router-dom";
-import { AGENT, naira } from "../lib/constants.js";
-import { uploadVideo, removeVideo } from "../lib/video.js";
+import { AGENT } from "../lib/constants.js";
+import { uploadVideo } from "../lib/video.js";
 import StatEditor from "./StatEditor.jsx";
 import { useAreas } from "../lib/useAreas.js";
 import { Btn, cx, inputCls, labelCls } from "./ui.jsx";
 
-const blank = { lodge_name: "", name: "", location: "", rooms: 1, units_total: 1, price_first_year: "", price_yearly: "", agent_id: "", stats: [] };
+const blank = { lodge_name: "", name: "", location: "", rooms: 1, units_total: 1, price_first_year: "", price_yearly: "", stats: [] };
 const hint = "text-[0.92rem] text-muted";
 
-// One lodge form for the owner (add / edit / review) and for agents (submit / resend).
+// The lodge form agents use to submit a lodge, or to edit and resend a rejected one.
 // onSave(row, actionKey) must return an error message, or nothing on success.
-// actions: [{ key, label, variant }]; the first one is the submit button. The "reject" key skips validation.
-export default function LodgeForm({
-  mode = "admin", initial = null, agents = [], lockedAgent = null, categories = [], onCategoriesChanged,
-  onSave, onCancel, title, top, actions, canDeleteVideos = false,
-}) {
-  const isAgent = mode === "agent";
-  const list = actions ?? [{ key: "save", label: initial ? "Save changes" : "Add lodge", variant: "primary" }];
+// actions: [{ key, label, variant }]; the first one is the submit button.
+export default function LodgeForm({ initial = null, lockedAgent = null, categories = [], onSave, onCancel, title, top, actions }) {
+  const list = actions ?? [{ key: "save", label: "Send for review", variant: "primary" }];
   const fileRef = useRef(null);
   const [file, setFile] = useState(null);
   const [busy, setBusy] = useState("");
@@ -29,9 +24,9 @@ export default function LodgeForm({
           lodge_name: initial.lodge_name ?? "", name: initial.name, location: initial.location ?? "", rooms: initial.rooms,
           units_total: initial.units_total,
           // an agent editing a rejected lodge sees their own base price, not the owner's adjusted one
-          price_first_year: isAgent && initial.agent_price_first_year != null ? initial.agent_price_first_year : initial.price_first_year,
-          price_yearly: isAgent && initial.agent_price_yearly != null ? initial.agent_price_yearly : initial.price_yearly,
-          agent_id: initial.agent_id ?? "", stats: initial.stats ?? [],
+          price_first_year: initial.agent_price_first_year != null ? initial.agent_price_first_year : initial.price_first_year,
+          price_yearly: initial.agent_price_yearly != null ? initial.agent_price_yearly : initial.price_yearly,
+          stats: initial.stats ?? [],
         }
       : blank
   );
@@ -49,32 +44,22 @@ export default function LodgeForm({
     const taken = (initial?.booked_count ?? 0) + (initial?.sold_count ?? 0);
     if (initial && units < taken) return `${initial.booked_count} are booked and ${initial.sold_count} sold, so this can't be below ${taken}.`;
     if (form.price_first_year === "" || form.price_yearly === "" || !(first >= 0) || !(yearly >= 0)) return "Enter both prices.";
-    if (!isAgent && !form.agent_id) return "Choose an agent for this lodge.";
     if (!initial && !file) return "Choose a video of the lodge.";
     return {
       lodge_name: form.lodge_name.trim(), name: form.name.trim(), location: form.location.trim() || null,
       rooms, units_total: units, price_first_year: first, price_yearly: yearly, stats: form.stats,
-      ...(isAgent ? {} : { agent_id: form.agent_id }),
     };
   }
 
   async function run(key) {
     setError(""); setActive(key);
-    let row = null;
-    if (key !== "reject") {
-      const v = validate();
-      if (typeof v === "string") return setError(v);
-      row = v;
-    }
+    const row = validate();
+    if (typeof row === "string") return setError(row);
     try {
-      if (row && file) { setBusy("Uploading video…"); row.video_url = await uploadVideo(file); }
+      if (file) { setBusy("Uploading video…"); row.video_url = await uploadVideo(file); }
       setBusy("Saving…");
       const err = await onSave(row, key);
-      if (err) {
-        if (row?.video_url && canDeleteVideos) await removeVideo(row.video_url);
-        throw new Error(err);
-      }
-      if (row?.video_url && initial?.video_url && canDeleteVideos) await removeVideo(initial.video_url);
+      if (err) throw new Error(err);
     } catch (e) {
       setError(e.message);
     } finally {
@@ -86,10 +71,6 @@ export default function LodgeForm({
     <form onSubmit={(e) => { e.preventDefault(); run(list[0].key); }} className="grid content-start gap-4">
       {title && <h2 className="font-display text-xl">{title}</h2>}
       {top}
-
-      {!isAgent && agents.length === 0 && (
-        <p className="rounded-lg bg-sold-soft px-4 py-3 text-[#6b4600]">Add an agent first on the <Link to="/admin/agents" className="underline">Agents</Link> page.</p>
-      )}
 
       <label className={labelCls}>Lodge name
         <input className={inputCls} value={form.lodge_name} onChange={(e) => set({ lodge_name: e.target.value })} placeholder="Fortune Lodge" />
@@ -113,43 +94,23 @@ export default function LodgeForm({
           <input className={inputCls} type="number" min="1" value={form.units_total} onChange={(e) => set({ units_total: e.target.value })} />
         </label>
       </div>
-      {initial && !isAgent && <p className={hint}>Raise "Apartments available" when a vacancy opens up in this lodge.</p>}
-
-      {isAgent && (
-        <p className="rounded-lg bg-sold-soft px-4 py-3 text-[0.92rem] text-[#6b4600]">
+      <p className="rounded-lg bg-sold-soft px-4 py-3 text-[0.92rem] text-[#6b4600]">
           <strong>About pricing:</strong> enter your own base price. {AGENT.name} will add a fee on top before the lodge goes live, and the fee varies with the lodge's base price.
-        </p>
-      )}
+      </p>
       <div className="grid grid-cols-2 gap-3">
-        <label className={labelCls}>{isAgent ? "Your first-year price (₦)" : "First-year price (₦)"}
+        <label className={labelCls}>Your first-year price (₦)
           <input className={inputCls} type="number" min="0" value={form.price_first_year} onChange={(e) => set({ price_first_year: e.target.value })} />
         </label>
-        <label className={labelCls}>{isAgent ? "Your yearly price after (₦)" : "Yearly price after (₦)"}
+        <label className={labelCls}>Your yearly price after (₦)
           <input className={inputCls} type="number" min="0" value={form.price_yearly} onChange={(e) => set({ price_yearly: e.target.value })} />
         </label>
       </div>
-      {!isAgent && initial?.agent_price_first_year != null && (
-        <p className="rounded-lg bg-paper px-3 py-2.5 text-[0.9rem]">
-          Agent asked for <strong>{naira(initial.agent_price_first_year)}</strong> first year and <strong>{naira(initial.agent_price_yearly)}</strong> per year. Add your fee in the fields above before approving.
-        </p>
-      )}
-
       <label className={labelCls}>Agent
-        {isAgent ? (
-          <>
-            <input className={cx(inputCls, "bg-paper")} value={lockedAgent?.name ?? ""} disabled readOnly />
-            <span className={cx(hint, "font-normal")}>This is you. It can't be changed.</span>
-          </>
-        ) : (
-          <select className={inputCls} value={form.agent_id} onChange={(e) => set({ agent_id: e.target.value })}>
-            <option value="">Select an agent</option>
-            {agents.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
-          </select>
-        )}
+        <input className={cx(inputCls, "bg-paper")} value={lockedAgent?.name ?? ""} disabled readOnly />
+        <span className={cx(hint, "font-normal")}>This is you. It can't be changed.</span>
       </label>
 
-      <StatEditor stats={form.stats} onChange={(stats) => set({ stats })} categories={categories}
-        onCategoriesChanged={onCategoriesChanged} local={isAgent} />
+      <StatEditor stats={form.stats} onChange={(stats) => set({ stats })} categories={categories} />
 
       <label className={labelCls}>{initial ? "Replace video (optional)" : "Video"}
         <input ref={fileRef} type="file" accept="video/mp4,video/webm,video/quicktime" className="font-medium"
