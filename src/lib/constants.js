@@ -13,6 +13,7 @@ export const naira = (n) => "₦" + Number(n).toLocaleString("en-NG");
 export const ROLES = { client: "Client", coordinator: "Coordinator", agent: "Lodge agent" };
 
 // "Fortune Lodge" (lodge_name) is the title; name is the apartment type. Old rows fall back to name.
+// Agent and admin screens only. Public pages show l.name (the apartment type) and never the lodge's own name.
 export const lodgeTitle = (l) => l.lodge_name || l.name;
 
 // Make a phone number usable in wa.me links (Nigerian numbers starting 0 become 234...)

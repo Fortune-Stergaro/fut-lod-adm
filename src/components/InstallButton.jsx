@@ -18,7 +18,7 @@ export default function InstallButton() {
   if (!promptEvent) return null;
   return (
     <button
-      className="min-h-10 cursor-pointer rounded-lg bg-green px-4 text-[0.85rem] font-bold text-white"
+      className="min-h-10 cursor-pointer rounded-lg bg-amber px-4 text-[0.85rem] font-bold text-plum"
       onClick={async () => {
         promptEvent.prompt();
         await promptEvent.userChoice.catch(() => {});

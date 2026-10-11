@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { AGENT, naira } from "../lib/constants.js";
 import { uploadVideo, removeVideo } from "../lib/video.js";
 import StatEditor from "./StatEditor.jsx";
+import { useAreas } from "../lib/useAreas.js";
 import { Btn, cx, inputCls, labelCls } from "./ui.jsx";
 
 const blank = { lodge_name: "", name: "", location: "", rooms: 1, units_total: 1, price_first_year: "", price_yearly: "", agent_id: "", stats: [] };
@@ -35,12 +36,14 @@ export default function LodgeForm({
       : blank
   );
   const set = (patch) => setForm((f) => ({ ...f, ...patch }));
+  const areas = useAreas();
 
   function validate() {
     const rooms = Number(form.rooms), units = Number(form.units_total);
     const first = Number(form.price_first_year), yearly = Number(form.price_yearly);
     if (form.lodge_name.trim().length < 2) return "Enter the lodge's name.";
     if (form.name.trim().length < 2) return "Enter the apartment type, e.g. Single room self-contain.";
+    if (!form.location) return "Choose the lodge's area.";
     if (!Number.isInteger(rooms) || rooms < 1) return "Rooms must be a whole number, 1 or more.";
     if (!Number.isInteger(units) || units < 1) return "Apartments available must be a whole number, 1 or more.";
     const taken = (initial?.booked_count ?? 0) + (initial?.sold_count ?? 0);
@@ -95,7 +98,11 @@ export default function LodgeForm({
         <input className={inputCls} value={form.name} onChange={(e) => set({ name: e.target.value })} placeholder="Single room self-contain" />
       </label>
       <label className={labelCls}>Area
-        <input className={inputCls} value={form.location} onChange={(e) => set({ location: e.target.value })} placeholder="Bosso Estate" />
+        <select className={inputCls} value={form.location} onChange={(e) => set({ location: e.target.value })}>
+          <option value="">Choose an area…</option>
+          {areas.map((a) => <option key={a} value={a}>{a}</option>)}
+          {form.location && !areas.some((a) => a.toLowerCase() === form.location.toLowerCase()) && <option value={form.location}>{form.location} (not in the list)</option>}
+        </select>
       </label>
 
       <div className="grid grid-cols-2 gap-3">

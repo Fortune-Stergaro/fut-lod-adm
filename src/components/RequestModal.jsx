@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { supabase } from "../lib/supabase.js";
-import { lodgeTitle } from "../lib/constants.js";
 import { Btn, Modal, inputCls, labelCls } from "./ui.jsx";
 
 const COPY = {
@@ -73,7 +72,7 @@ export default function RequestModal({ lodge, type, user, onClose, onDone }) {
       ) : (
         <form onSubmit={submit} className="grid gap-3.5">
           <h2 className="font-display text-xl">{copy.title}</h2>
-          <p className="text-[0.92rem] text-muted">{lodgeTitle(lodge)}. {copy.help}</p>
+          <p className="text-[0.92rem] text-muted">{lodge.name}{lodge.location ? ` in ${lodge.location}` : ""}. {copy.help}</p>
           {type === "booking" && <p className="text-[0.92rem] text-muted">Booking as {user?.email}</p>}
           <label className={labelCls}>Full name
             <input className={inputCls} value={name} onChange={(e) => setName(e.target.value)} autoFocus />

@@ -4,14 +4,14 @@
 // `v` is only a cache-buster in the URL: it changes whenever the numbers change, so WhatsApp/Facebook re-fetch the image.
 import { ImageResponse } from "@vercel/og";
 import { getHomeData, getLodge } from "./_lib/data.js";
-import { availableStats, lodgeTitle, naira } from "./_lib/seo.js";
+import { availableStats, naira } from "./_lib/seo.js";
 
 export const config = { runtime: "edge" };
 
 const boldFont = fetch(new URL("./_fonts/BricolageGrotesque-Bold.ttf", import.meta.url)).then((r) => r.arrayBuffer());
 const regularFont = fetch(new URL("./_fonts/BricolageGrotesque-Regular.ttf", import.meta.url)).then((r) => r.arrayBuffer());
 
-const C = { band: "#0f1f1b", band2: "#1e352f", mint: "#a9c9bc", green: "#1f8a66", jade: "#17734a", gold: "#c79200", premium: "#4338ca", silver: "#7b858d", booked: "#b4361f", white: "#ffffff" };
+const C = { band: "#1a0a2e", band2: "#2b1043", mint: "#b8a6d6", green: "#15803d", jade: "#6a3fa0", gold: "#6a3fa0", premium: "#ffb234", silver: "#5b4a7a", booked: "#b4361f", white: "#ffffff", amber: "#ffb234", plum: "#2b1043" };
 
 // satori needs display:flex on every element that has more than one child, so every box is a flex box.
 const box = (style, ...children) => {
@@ -49,23 +49,23 @@ function homeCard(count) {
         ),
     box(
       { alignItems: "center" },
-      box({ background: C.green, color: C.white, fontSize: 32, fontWeight: 700, padding: "16px 34px", borderRadius: 999 }, "Tap to browse lodges"),
+      box({ background: C.amber, color: C.plum, fontSize: 32, fontWeight: 700, padding: "16px 34px", borderRadius: 999 }, "Tap to browse lodges"),
       text({ marginLeft: 24, fontSize: 26, color: C.mint, fontWeight: 400 }, "Near Federal University of Technology, Minna")
     )
   );
 }
 
 function lodgeCard(l) {
-  const title = lodgeTitle(l);
+  const title = l.name;
+  const sub = l.location || "";
   const free = Number(l.units_available) || 0;
   const total = Number(l.units_total) || 0;
-  const sub = [l.lodge_name ? l.name : null, l.location].filter(Boolean).join("  ·  ");
   const stats = availableStats(l);
   const chipBg = { premium: C.premium, convenient: C.gold, essential: C.silver };
   const shown = stats.slice(0, 6); // already sorted premium > convenient > essential
   const chips = [
     l.rooms ? box({ border: `2px solid ${C.mint}`, color: C.white, fontSize: 26, fontWeight: 700, padding: "8px 20px", borderRadius: 999, marginRight: 12, marginBottom: 12 }, `${l.rooms} room${l.rooms === 1 ? "" : "s"}`) : null,
-    ...shown.map((s) => box({ background: chipBg[s.status] || C.silver, color: C.white, fontSize: 25, fontWeight: 700, padding: "7px 18px", borderRadius: 999, marginRight: 12, marginBottom: 12 }, clip(s.name, 22))),
+    ...shown.map((s) => box({ background: chipBg[s.status] || C.silver, color: s.status === "premium" ? C.plum : C.white, fontSize: 25, fontWeight: 700, padding: "7px 18px", borderRadius: 999, marginRight: 12, marginBottom: 12 }, clip(s.name, 22))),
     stats.length > shown.length ? box({ color: C.mint, fontSize: 26, padding: "8px 8px", marginBottom: 12 }, `+${stats.length - shown.length} more`) : null,
   ];
   const sameFirstYear = !Number(l.price_first_year) || l.price_first_year === l.price_yearly;

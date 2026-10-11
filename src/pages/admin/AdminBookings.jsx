@@ -16,10 +16,7 @@ export default function AdminBookings() {
   const [error, setError] = useState("");
 
   const load = async () => {
-    const { data, error } = await supabase
-      .from("bookings")
-      .select("*, lodges(id, name, lodge_name, agent_id, agents(name))")
-      .order("created_at", { ascending: false });
+    const { data, error } = await supabase.rpc("admin_bookings");
     if (error) return setState("error");
     setRows(data); setState("ready");
   };

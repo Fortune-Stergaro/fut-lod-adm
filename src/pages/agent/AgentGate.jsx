@@ -31,7 +31,7 @@ export default function AgentGate() {
   }
 
   const link = ({ isActive }) =>
-    cx("flex min-h-11 items-center rounded-lg border px-4 font-bold no-underline", isActive ? "border-ink bg-ink text-white" : "border-line bg-white");
+    cx("flex min-h-11 items-center rounded-full border px-4 font-display text-[13px] font-bold no-underline transition", isActive ? "border-plum bg-plum text-white shadow-[0_4px_14px_rgba(43,16,67,0.25)]" : "border-plum/15 bg-white text-ink hover:border-plum/40");
   return (
     <>
       <div className="mb-6 flex flex-wrap items-center gap-2">

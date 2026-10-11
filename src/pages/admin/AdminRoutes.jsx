@@ -9,6 +9,7 @@ import AdminLodges from "./AdminLodges.jsx";
 import AdminAgents from "./AdminAgents.jsx";
 import AdminAgentPage from "./AdminAgentPage.jsx";
 import AdminStats from "./AdminStats.jsx";
+import AdminAreas from "./AdminAreas.jsx";
 import NotFound from "../NotFound.jsx";
 
 // Loaded lazily, only after AdminGate confirms the signed-in user is an admin, so other visitors never even download this code.
@@ -24,6 +25,7 @@ export default function AdminRoutes() {
         <Route path="lodges" element={<AdminLodges />} />
         <Route path="agents" element={<AdminAgents />} />
         <Route path="agents/:id" element={<AdminAgentPage />} />
+        <Route path="areas" element={<AdminAreas />} />
         <Route path="stats" element={<AdminStats />} />
         <Route path="*" element={<NotFound />} />
       </Route>

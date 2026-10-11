@@ -12,11 +12,7 @@ export default function AdminInterests() {
 
   const load = async () => {
     setState("loading");
-    const { data, error } = await supabase
-      .from("requests")
-      .select("id, name, phone, created_at, lodge_id, lodges(name, lodge_name)")
-      .eq("type", "interest")
-      .order("created_at", { ascending: false });
+    const { data, error } = await supabase.rpc("admin_interests");
     if (error) return setState("error");
     setRows(data); setState("ready");
   };

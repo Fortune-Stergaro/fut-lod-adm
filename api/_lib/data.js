@@ -28,7 +28,7 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export async function getLodge(id) {
   if (!UUID.test(id || "")) return null;
   const rows = await rest(
-    `lodges_with_stats?id=eq.${id}&select=id,lodge_name,name,location,rooms,units_total,units_available,price_first_year,price_yearly,stats&limit=1`
+    `lodges_with_stats?id=eq.${id}&select=id,name,location,rooms,units_total,units_available,price_first_year,price_yearly,stats&limit=1`
   );
   return Array.isArray(rows) && rows[0] ? rows[0] : null;
 }

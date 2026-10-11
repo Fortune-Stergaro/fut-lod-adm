@@ -2,32 +2,48 @@
 
 /* Design tokens. Components use them as Tailwind classes, e.g. bg-paper, text-muted, border-line, font-display. */
 @theme {
-  --font-sans: "DM Sans", system-ui, sans-serif;
-  --font-display: "Bricolage Grotesque", "DM Sans", sans-serif;
+  --font-sans: "Poppins", system-ui, sans-serif;
+  --font-display: "Bai Jamjuree", "Poppins", sans-serif;
 
-  --color-paper: #f5f7f6;
-  --color-ink: #17212b;
-  --color-muted: #5d6b78;
-  --color-line: #d9e0e4;
-  --color-line-soft: #e3eae7;
-  --color-green: #17734a;
-  --color-green-soft: #e0f2ea;
-  --color-premium: #4338ca;
-  --color-premium-soft: #e8e7fb;
-  --color-premium-ink: #3b24b8;
+  --color-paper: #f8f5fd;
+  --color-ink: #2b1043;
+  --color-muted: #6b5b8a;
+  --color-line: #e4dbf1;
+  --color-line-soft: #eee7f7;
+  --color-green: #15803d;
+  --color-green-soft: #dcf5e4;
+  --color-premium: #6a3fa0;
+  --color-premium-soft: #f0e9fb;
+  --color-premium-ink: #4a1a6e;
   --color-booked: #b4361f;
   --color-booked-soft: #fbe6e1;
   --color-sold: #8a5a00;
   --color-sold-soft: #fff3d6;
-  --color-silver: #7b858d;
-  --color-silver-soft: #eceff1;
-  --color-gold: #9a6b00;
-  --color-gold-line: #c79200;
-  --color-gold-soft: #fbefc9;
-  --color-band: #0f1f1b;
-  --color-band-2: #1e352f;
-  --color-mint: #a9c9bc;
-  --color-jade: #1f8a66;
+  --color-silver: #7b6f93;
+  --color-silver-soft: #efeaf6;
+  --color-gold: #8a5a00;
+  --color-gold-line: #ffb234;
+  --color-gold-soft: #fff3d6;
+  --color-band: #1a0a2e;
+  --color-band-2: #2b1043;
+  --color-mint: #b8a6d6;
+  --color-jade: #6a3fa0;
+
+  /* NIHUB-inspired palette and type for the Browse and Lodge pages */
+  --font-bai: "Bai Jamjuree", sans-serif;
+  --font-pop: "Poppins", sans-serif;
+  --font-jet: "JetBrains Mono", monospace;
+  --color-plum: #2b1043;
+  --color-plum-2: #1a0a2e;
+  --color-plum-100: #6b5b8a;
+  --color-plum-200: #735f8b;
+  --color-plum-300: #9b8ab0;
+  --color-lav: #f5f0ff;
+  --color-amber: #ffb234;
+  --color-violet: #6a3fa0;
+  --color-lilac: #c084fc;
+  --color-ok: #22c55e;
+  --color-warn: #f97316;
 
   --animate-shimmer: shimmer 1.3s infinite;
   @keyframes shimmer {
@@ -37,3 +53,17 @@
 
 body { background: var(--color-paper); color: var(--color-ink); font-family: var(--font-sans); line-height: 1.5; }
 :focus-visible { outline: 3px solid var(--color-premium); outline-offset: 2px; }
+
+/* Gradient headline word and dot-grid backdrop (used in the page heroes) */
+.clarity-text-gradient {
+  background: linear-gradient(120deg, #ffb234 7.74%, #6a3fa0 58.45%, #c084fc 92.26%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.dot-grid {
+  background-image: radial-gradient(rgba(43, 16, 67, 0.2) 1.2px, transparent 1.4px);
+  background-size: 22px 22px;
+  -webkit-mask-image: radial-gradient(ellipse 80% 90% at 75% 40%, #000 25%, transparent 78%);
+  mask-image: radial-gradient(ellipse 80% 90% at 75% 40%, #000 25%, transparent 78%);
+}

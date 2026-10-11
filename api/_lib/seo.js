@@ -4,7 +4,6 @@ import { env } from "./data.js";
 export const SITE_NAME = "Futminna Lodges";
 
 export const naira = (n) => "₦" + String(Math.round(Number(n) || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-export const lodgeTitle = (l) => l.lodge_name || l.name;
 const clip = (s, n) => (s.length > n ? s.slice(0, n - 1).trimEnd() + "…" : s);
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
@@ -38,7 +37,7 @@ export function homeMeta(count, site) {
 
 export function lodgeMeta(lodge, site) {
   const where = lodge.location ? ` in ${lodge.location}` : "";
-  const title = lodge.lodge_name ? `${lodge.lodge_name}: ${lodge.name}${where}` : `${lodge.name}${where}`;
+  const title = `${lodge.name}${where}`;
   const stats = availableStats(lodge);
   const free = Number(lodge.units_available) || 0;
   const total = Number(lodge.units_total) || 0;
@@ -64,7 +63,7 @@ export function lodgeMeta(lodge, site) {
     description,
     url,
     image,
-    imageAlt: `${lodgeTitle(lodge)}: ${price}, ${avail}`,
+    imageAlt: `${lodge.name}: ${price}, ${avail}`,
     jsonLd: {
       "@context": "https://schema.org",
       "@type": "Product",

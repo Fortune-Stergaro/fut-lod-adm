@@ -4,7 +4,7 @@ React + Vite + Tailwind CSS v4 + Supabase. Styling lives in each component as Ta
 Shared building blocks (buttons, panels, tags, modal, chip colours) are in `src/components/ui.jsx`.
 
 ## 1. Database (Supabase SQL Editor, in order)
-`schema.sql` → `v2-migration.sql` → `v3-migration.sql` → `v4-migration.sql` → `v5-migration.sql`
+`schema.sql` → `v2-migration.sql` → `v3-migration.sql` → `v4-migration.sql` → `v5-migration.sql` → `v6-migration.sql` → `v7-migration.sql` (deploy the site code first; see `supabase/MIGRATIONS.md`)
 
 **Before running `v5-migration.sql`, open it and replace `PUT-YOUR-ADMIN-EMAIL-HERE` (near the top) with the email you sign in with as admin.** The script refuses to run until you do, so you can't lock yourself out by accident.
 
@@ -61,3 +61,6 @@ Admin pages are still open. When you protect them, update `admin_check()` in `v2
 - The browse page shows how many apartments and lodges are available right now.
 - Each lodge page has a **Copy link** button (copies `https://yourdomain/lodge/<id>`).
 - Shared lodge links list the features premium first, then convenient, then essential, in the preview text and on the card image.
+
+## Design
+The whole site uses a NIHUB-inspired look: deep plum + amber, Bai Jamjuree headings, Poppins body, JetBrains Mono labels. Colour and font tokens live in `src/index.css` (`ink` is now the plum, `paper` a pale lilac, plus `plum`, `amber`, `violet`, fonts `font-display/sans/jet`). Buttons, panels, tags, pop-ups and form fields are styled once in `src/components/ui.jsx`, so every page follows. Browse/Lodge pieces are in `src/components/lodgeUi.jsx`; the footer is `src/components/Footer.jsx`.

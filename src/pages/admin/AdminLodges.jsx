@@ -73,7 +73,7 @@ export default function AdminLodges() {
             <Panel key={l.id} pad="xs" accent={editing?.id === l.id ? "premium" : "default"} className="grid gap-4 sm:grid-cols-[180px_1fr]">
               {l.video_url
                 ? <video src={l.video_url} muted playsInline preload="metadata" className="aspect-[4/3] w-full rounded-[10px] object-cover" />
-                : <div className="grid aspect-[4/3] w-full place-items-center rounded-[10px] bg-[#17302a] text-[0.9rem] text-mint">No video</div>}
+                : <div className="grid aspect-[4/3] w-full place-items-center rounded-[10px] bg-plum-2 text-[0.9rem] text-mint">No video</div>}
               <div>
                 <h3 className="font-display text-[1.1rem]">{lodgeTitle(l)}</h3>
                 <p className="mt-1 text-[0.92rem] text-muted">

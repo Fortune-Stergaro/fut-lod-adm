@@ -15,7 +15,7 @@ function legacyCopy(text) {
 }
 
 // Copies `url` to the clipboard and says so for a couple of seconds.
-export default function CopyLinkButton({ url, className }) {
+export default function CopyLinkButton({ url, className, plum = false }) {
   const [copied, setCopied] = useState(false);
   const timer = useRef();
   useEffect(() => () => clearTimeout(timer.current), []);
@@ -32,7 +32,9 @@ export default function CopyLinkButton({ url, className }) {
   return (
     <button type="button" onClick={copy}
       className={cx("inline-flex min-h-10 cursor-pointer items-center gap-2 rounded-[10px] border-2 px-3.5 text-sm font-bold",
-        copied ? "border-green bg-green-soft text-green" : "border-ink bg-white text-ink", className)}>
+        plum
+        ? (copied ? "border-ok bg-ok/10 text-[#15803D]" : "border-plum/25 bg-white font-bai text-plum")
+        : (copied ? "border-green bg-green-soft text-green" : "border-ink bg-white text-ink"), className)}>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         {copied
           ? <path d="M20 6 9 17l-5-5" />

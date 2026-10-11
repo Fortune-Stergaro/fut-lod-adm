@@ -37,7 +37,7 @@ export default function AdminRequests() {
           <Panel key={l.id} pad="xs" className="grid gap-4 sm:grid-cols-[180px_1fr]">
             {l.video_url
               ? <video src={l.video_url} muted playsInline preload="metadata" className="aspect-[4/3] w-full rounded-[10px] object-cover" />
-              : <div className="grid aspect-[4/3] w-full place-items-center rounded-[10px] bg-[#17302a] text-[0.9rem] text-mint">No video</div>}
+              : <div className="grid aspect-[4/3] w-full place-items-center rounded-[10px] bg-plum-2 text-[0.9rem] text-mint">No video</div>}
             <div>
               <div className="flex flex-wrap items-center gap-2">
                 <h3 className="font-display text-[1.1rem]">{lodgeTitle(l)}</h3>
