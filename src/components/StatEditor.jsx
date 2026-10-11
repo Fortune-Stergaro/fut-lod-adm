@@ -1,13 +1,15 @@
 import { useState } from "react";
+import { supabase } from "../lib/supabase.js";
 import { STATUSES } from "../lib/constants.js";
 import StatBadge from "./StatBadge.jsx";
 import { Btn, LinkBtn, labelCls, inputCls, selectCls, statChip } from "./ui.jsx";
 
 // Type a stat; pick it from the known categories or add a new one.
-// A new stat is only added to this lodge; the owner turns it into a category when approving.
-export default function StatEditor({ stats, onChange, categories }) {
+// local = true (agents): a new stat is only added to this lodge; the owner turns it into a category when approving.
+export default function StatEditor({ stats, onChange, categories, onCategoriesChanged = () => {}, local = false }) {
   const [q, setQ] = useState("");
   const [newStatus, setNewStatus] = useState("convenient");
+  const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
   const name = q.trim().replace(/\s+/g, " ");
@@ -19,11 +21,17 @@ export default function StatEditor({ stats, onChange, categories }) {
   const add = (c) => { onChange([...stats, { name: c.name, status: c.status, available: true }]); setQ(""); setError(""); };
   const patch = (i, p) => onChange(stats.map((s, j) => (j === i ? { ...s, ...p } : s)));
 
-  function createAndAdd() {
+  async function createAndAdd() {
     setError("");
     if (name.length < 2) return setError("Type the stat's name first.");
     if (added.has(lower)) return setError("Already added to this lodge.");
-    add({ name, status: newStatus });
+    if (local) return add({ name, status: newStatus });
+    setBusy(true);
+    const { data, error } = await supabase.from("stat_categories").insert({ name, status: newStatus }).select().single();
+    setBusy(false);
+    if (error) return setError(error.code === "23505" ? "That category already exists." : "Could not create the category.");
+    onCategoriesChanged();
+    add(data);
   }
 
   function onKey(e) {
@@ -32,7 +40,7 @@ export default function StatEditor({ stats, onChange, categories }) {
     if (!name) return;
     if (added.has(lower)) return setError("Already added to this lodge.");
     if (exact) return add(exact);
-    setError(`Not in the list yet. Pick a status and click “Add”.`);
+    setError(`Not in the list yet. Pick a status and click “${local ? "Add" : "Create and add"}”.`);
   }
 
   return (
@@ -73,7 +81,7 @@ export default function StatEditor({ stats, onChange, categories }) {
           <select className={selectCls} value={newStatus} onChange={(e) => setNewStatus(e.target.value)} aria-label="Status for the new stat">
             {STATUSES.map((s) => <option key={s.key} value={s.key}>{s.label}</option>)}
           </select>
-          <Btn type="button" size="sm" onClick={createAndAdd}>Add</Btn>
+          <Btn type="button" size="sm" disabled={busy} onClick={createAndAdd}>{busy ? "Creating…" : local ? "Add" : "Create and add"}</Btn>
         </div>
       )}
       {exact && added.has(lower) && <p className="m-0 text-[0.92rem] text-muted">“{exact.name}” is already on this lodge.</p>}

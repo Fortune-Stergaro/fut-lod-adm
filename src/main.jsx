@@ -18,3 +18,6 @@ if ("serviceWorker" in navigator && import.meta.env.PROD) {
     navigator.serviceWorker.register("/sw.js").catch(() => {});
   });
 }
+
+// Which build is running (browser console only)
+console.info("[Futminna Lodges] build: full (public + agent + admin)");

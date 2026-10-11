@@ -35,7 +35,7 @@ export default function AgentLodgeForm() {
     <div className="mx-auto max-w-[560px]">
       <Panel>
         <LodgeForm
-          initial={lodge} lockedAgent={agent} categories={categories} onSave={onSave}
+          mode="agent" initial={lodge} lockedAgent={agent} categories={categories} onSave={onSave}
           title={id ? "Edit and resend" : "Add a lodge"}
           actions={[{ key: "send", label: id ? "Resend for review" : "Send for review", variant: "primary" }]}
           top={<>

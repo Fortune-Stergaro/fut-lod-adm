@@ -1,9 +1,9 @@
 export const AGENT = {
   name: "Obe Fortune",
-  phone: "0816 983 5641",          // TODO: real number
-  whatsapp: "0816 983 5641",       // TODO: real number
-  whatsappIntl: "2348169835641",   // digits only, with country code, for wa.me links
-  callHref: "tel:+2348169835641",
+  phone: "0800 000 0000",          // TODO: real number
+  whatsapp: "0800 000 0000",       // TODO: real number
+  whatsappIntl: "2348000000000",   // digits only, with country code, for wa.me links
+  callHref: "tel:+2348000000000",
 };
 
 
